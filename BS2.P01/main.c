@@ -59,6 +59,19 @@ int child_main(const char *file_name)
         return EXIT_FAILURE;
     }
     
+    char buffer[512];
+    if(!fgets(buffer, 512, f))
+    {
+        perror("Failed to read file content");
+        return EXIT_FAILURE;
+    }
+    long number = strtol(buffer, NULL, 10);
+    printf("Read %ld from file\n",number);
+    
+    number++;
+    rewind(f);
+    fprintf(f, "%ld",number);
+    
     
     fclose(f);
     

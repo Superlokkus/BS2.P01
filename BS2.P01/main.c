@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/sem.h>
+#include "my_semaphore.h"
 
 int child_main(const char *file_name);
 
@@ -21,12 +21,7 @@ int main(int argc, const char * argv[]) {
         return EXIT_FAILURE;
     }
     
-    int semid = semget(IPC_PRIVATE,1,SEM_R);
-    if (semid == -1) {
-        perror("Semget() failed");
-        return EXIT_FAILURE;
-    }
-    
+    my_sem_id file_sem = create_sem(1);
     const uint_fast8_t child_count = 5;
     pid_t childs[child_count];
     
@@ -50,7 +45,9 @@ int main(int argc, const char * argv[]) {
         waitpid(childs[i], &return_value,0);
         if (WIFEXITED(return_value)) {
             printf("Child Nr. %d exited with %d\n",i+1,WEXITSTATUS(return_value));
+            //while( (wpid = wait(&exitStatus)) > 0)
         }
+        delete_sem(file_sem);
     }
     
     return EXIT_SUCCESS;

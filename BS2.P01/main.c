@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/sem.h>
 
 int child_main(const char *file_name);
 
@@ -20,23 +21,28 @@ int main(int argc, const char * argv[]) {
         return EXIT_FAILURE;
     }
     
+    int semid = semget(IPC_PRIVATE,1,SEM_R);
+    if (semid == -1) {
+        perror("Semget() failed");
+        return EXIT_FAILURE;
+    }
+    
     const uint_fast8_t child_count = 5;
     pid_t childs[child_count];
     
     int i;
     for(i = 0; i < child_count; i++)
     {
-        pid_t pid = fork();
-        if (pid == 0)
+        childs[i] = fork();
+        if (childs[i] == 0)
         {
             //Child
             return child_main(argv[1]);
-        } else if(pid == -1)
+        } else if(childs[i] == -1)
         {
             perror("Fork of child failed");
             return EXIT_FAILURE;
         }
-        childs[i] = pid;
     }
     
     for (i = 0; i < child_count; i++) {

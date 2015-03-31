@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <errno.h>
 #include "my_semaphore.h"
 
 const uint16_t increment_interations = 20000;
@@ -48,8 +49,14 @@ int main(int argc, const char * argv[]) {
         pid_t wait_return = waitpid(childs[i], &child_return_value,0);
         if (wait_return == -1)
         {
-            perror("Waitpid unblocked early because");
-            continue;
+            if (errno == EINTR) {
+                perror("Waitpid unblocked early because");
+                continue;
+            } else
+            {
+                perror("Waitpid failed");
+                exit(EXIT_FAILURE);
+            }
         }
         if (WIFEXITED(child_return_value)) {
             printf("Child Nr. %d exited with %d\n",i+1,WEXITSTATUS(child_return_value));
@@ -81,12 +88,10 @@ int child_main(const char *file_name,my_sem_id file_sem)
             return EXIT_FAILURE;
         }
         long number = strtol(buffer, NULL, 10);
-        printf("Read %ld from file\n",number);
         
         number++;
         rewind(f);
         fprintf(f, "%ld",number);
-        
         
         fclose(f);
         V(file_sem);

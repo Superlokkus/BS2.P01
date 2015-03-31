@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <errno.h>
+#include <time.h>
 #include "my_semaphore.h"
 
 const uint16_t increment_interations = 20000;
@@ -29,6 +30,7 @@ int main(int argc, const char * argv[]) {
     const uint_fast8_t child_count = 5;
     pid_t childs[child_count];
     
+    time_t before = time(NULL);
     int i;
     for(i = 0; i < child_count; i++)
     {
@@ -65,6 +67,8 @@ int main(int argc, const char * argv[]) {
         i++;
     }
     delete_sem(file_sem);
+    time_t after = time(NULL) - before;
+    printf("Took %ld seconds\n",after);
     
     return EXIT_SUCCESS;
 }

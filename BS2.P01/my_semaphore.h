@@ -27,16 +27,16 @@ my_sem_id create_sem(const int sem_init);
 @warning Undefined behaviour if called more than once
  @param sem Identifier of to be deleted semaphore
  */
-void delete_sem(my_sem_id sem);
+void delete_sem(my_sem_id sem_id);
 
 /*! @brief Blocks on given semaphore
  @param sem Semaphore to block on
 */
-void P(my_sem_id sem);
+void P(my_sem_id sem_id);
 
 /*! @brief Unlocks semaphore
  @param sem Semaphore to unlock
  */
-void V(my_sem_id sem);
+void V(my_sem_id sem_id);
 
 #endif /* defined(__BS2_P01__my_semaphore__) */

@@ -77,7 +77,6 @@ int child_main(const char *file_name,my_sem_id file_sem)
 {
     uint16_t i;
     for (i = 0; i < increment_interations; i++) {
-        P(file_sem);
         FILE *f = fopen(file_name, "r+");
         if (!f)
         {
@@ -86,6 +85,7 @@ int child_main(const char *file_name,my_sem_id file_sem)
         }
         
         char buffer[512];
+        P(file_sem);
         if(!fgets(buffer, 512, f))
         {
             perror("Failed to read file content");
@@ -96,7 +96,6 @@ int child_main(const char *file_name,my_sem_id file_sem)
         number++;
         rewind(f);
         fprintf(f, "%ld",number);
-        
         fclose(f);
         V(file_sem);
     }

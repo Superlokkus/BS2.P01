@@ -97,6 +97,12 @@ int child_main(const char *file_name,my_sem_id file_sem)
         rewind(f);
         fprintf(f, "%ld",number);
         fclose(f);
+        //P2 Aufgabe 1
+        if (i == 42)
+        {
+            fprintf(stderr, "Simulated crash to show work of SEM_UNDO Flag\n");
+            exit(EXIT_FAILURE);
+        }
         V(file_sem);
     }
     
